@@ -8,7 +8,7 @@ function onOpen() {
 function doGet() {
   try {   
    
-    var html = HtmlService.createHtmlOutputFromFile('finalchanges')
+    var html = HtmlService.createHtmlOutputFromFile('index.html')
       .setWidth(600)
       .setHeight(400);
     SpreadsheetApp.getUi().showModalDialog(html, 'Surereach');
