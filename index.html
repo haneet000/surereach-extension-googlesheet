@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Header Example</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    #verificationSection {
+      margin: 3;
+    }
+
+    #form-container {
+      width: 99%;
+      margin: auto;
+      padding: 10px 40px;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+    }
+
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      /* Semi-transparent white background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      visibility: hidden;
+    }
+
+    .loader {
+      border: 8px solid #f3f3f3;
+      /* Light gray border */
+      border-top: 8px solid #3498db;
+      /* Blue border */
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loader-text {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    /* Styles for sign-in page */
+    .signin-page {
+      background-color: #fff;
+      color: #333;
+      border-radius: 12px;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px;
+      display: none;
+    }
+
+    /* <!-- sign in page display --> */
+    .signin-page {
+      background-color: #fff;
+      color: #333;
+      border-radius: 12px;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 20px;
+    }
+
+    #form-container {
+      width: 99%;
+      margin: auto;
+      padding: 10px 40px;
+    }
+
+    #second-page-2 {
+      display: none;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    #second-page-2 table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #second-page-2 th,
+    #second-page-2 td {
+      padding: 18px;
+      ;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+
+
+    #select-header {
+      display: none;
+      width: 100%;
+      text-align: center;
+      background-color: #f9f8f8;
+      padding: 8px;
+      font-weight: bold;
+    }
+
+
+    .iti {
+      width: 100%;
+      margin: 20px 0px 0px 0px;
+    }
+
+    .title-container {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .title-container img {
+      margin-top: 25px;
+      width: 150px;
+      height: auto;
+      filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+    }
+
+    h2,
+    h3 {
+      text-align: left;
+      color: #000;
+      /* margin-bottom: 20px; */
+    }
+
+    .input-container {
+      margin-bottom: 12px;
+    }
+
+    input[type="submit"],
+    input[type="number"] {
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      width: 30%;
+      background-color: #f5f5f5;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      background-color: #f5f5f5;
+      font-size: 16px;
+      text-align: center; 
+    }
+
+    input[type="tel"] {
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      padding: 12px;
+      width: 100%;
+      background-color: #f5f5f5;
+      height: 40px;
+    }
+
+    .loader-hidden {
+      display: none;
+    }
+
+    #setHeaderButton {
+      padding: 8px;
+      width: 100%;
+      border: 1px solid #007bff;
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    /* #verify, */
+    #submitButton,
+    #Confirm {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      margin-top: 25px;
+      height: 45px;
+      font-size: 16px;
+    }
+
+    #verify {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      margin-top: 2px;
+      /* This margin-top applies only to the #verify button */
+      height: 45px;
+      font-size: 16px;
+    }
+    
+    
+    #processingCompleteMessage {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 9999;
+    text-align: center;
+    width: 300px; /* Set a fixed width for better readability */
+  }
+
+
+    #form-container {
+      width: 99%;
+      margin: auto;
+      padding: 10px 40px;
+      /* border: 1px solid #000; Black border */
+      /* border-radius: 5px; /* Optional: Add border radius for rounded corners */
+      /* box-sizing: border-box; Ensure padding and border are included in width */
+      
+    }
+
+ 
+
+    .verification-section {
+      display: none;
+    }
+
+    .error {
+      color: red;
+      display: none;
+    }
+
+    .verification-section {
+      display: none;
+      /* Initially hide verification section */
+    }
+
+
+    .otp-container {
+      display: flex;
+      /* Display OTP input boxes in a single line */
+      justify-content: left;
+      padding-top: 20px;
+    }
+
+    .otp-input {
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+     .response-container {
+      background-color: #fff;
+      color: #333;
+      border-radius: 12px;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="loader"></div>
+    <div class="loader-text">Loading...</div>
+  </div>
+  <div id="processingCompleteMessage" style="text-align: center; display: none;">Processing Complete</div>
+  <div class="container">
+    <div class="title-container">
+      <img src="https://surereach.io/wp-content/uploads/2022/11/dark-logo.png" alt="Logo">
+    </div>
+
+    <form id="form-container">
+      <h2>Phone Number</h2>
+      <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Phone Number">
+      <p class="error">Please enter the valid mobile number</p>
+      <div class="input-container">
+        <input type="button" value="Submit" id="submitButton">
+      </div>
+      <div class="verification-section" id="verificationSection">
+        <h3>Enter OTP</h3>
+        <form id="verificationForm">
+          <div class="otp-container">
+            <input type="text" class="otp-input" id="verificationCode1" name="verificationCode1" maxlength="1">
+            <input type="text" class="otp-input" id="verificationCode2" name="verificationCode2" maxlength="1">
+            <input type="text" class="otp-input" id="verificationCode3" name="verificationCode3" maxlength="1">
+            <input type="text" class="otp-input" id="verificationCode4" name="verificationCode4" maxlength="1">
+          </div>
+          <br><br>
+          <input type="button" id="verify" value="Verify">
+        </form>
+      </div>
+    </form>
+  </div>
+  <form id="signin-page" class="signin-page">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" placeholder="Username">
+    <label for="emailId">Email Id</label>
+    <input type="text" id="emailId" name="emailId" placeholder="Email Id">
+    <input type="button" id="Confirm" value="Confirm">
+  </form>
+  </div>
+  <div id="second-page-2">
+    <table class="response-container">
+      <thead>
+        <tr>
+          <th colspan="2">Set Your Header</th>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center;">
+            <div id="header-select-container">
+              <select id="select-header"></select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center;">
+            <!-- <input type="button" value="Set Header" id="setHeaderButton"> -->
+            <button id="setHeaderButton">Set Header</button>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
+  <script>
+const baseUrl = 'https://api.surereach.io';
+const accessToken = localStorage.getItem('accessToken');
+const refreshTokenValue = localStorage.getItem('refreshToken');
+
+function signInPage() {
+    hideLoader();
+    $("#form-container").hide();
+    $("#second-page-2").hide();
+    $("#select-header").hide();
+    $(".signin-page").show();
+}
+
+document.getElementById("submitButton").addEventListener("click", function() {
+    document.getElementById("verificationSection").style.display = "block"; // Show verification section
+    document.getElementById("submitButton").style.display = "none"; // Hide submit button
+    document.getElementById("verificationCode1").focus(); // Set focus on the first OTP input box
+});
+
+document.querySelectorAll('.otp-input').forEach(function(input, index, array) {
+    input.addEventListener('input', function() {
+        if (input.value.length >= 1 && index < array.length - 1) {
+            array[index + 1].focus(); // Move focus to the next OTP input box
+        }
+    });
+});
+
+function handleSecondPage() {
+    const loginContainer = $(".container");
+    const responseContainer = $("#second-page-2");
+    const selectcontainer = $("#select-header");
+    loginContainer.css('display', 'none');
+    responseContainer.css('display', 'block');
+    selectcontainer.css('display', 'block');
+}
+
+function showErrorMessage(message) {
+    $(".error").text(message).show();
+}
+
+function getHeaderValues() {
+    showLoader();
+    google.script.run.withSuccessHandler(populateHeaderSelect).getHeaderValues();
+    hideLoader();
+}
+
+function populateHeaderSelect(headerValues) {
+    console.log("HeaderValues", headerValues);
+    var select = $('#select-header');
+    $.each(headerValues, function(i, value) {
+        select.append($('<option>').text(value));
+    });
+}
+
+function displayProcessingCompleteMessage() {
+    document.getElementById("processingCompleteMessage").style.display = "block";
+}
+
+function handleSuccess(response) {
+    console.log(response);
+    displayProcessingCompleteMessage(); 
+    hideLoader(); 
+}
+
+function handleError(error) {
+    hideLoader();
+    console.error("Error:", error);
+}
+
+function callShowSheet() {
+    const accessToken = localStorage.getItem('accessToken');
+    showLoader();
+    var selectedHeader = $('#select-header').val(); // Get the selected header value
+    console.log("Calling showSheet function...");
+    google.script.run.withSuccessHandler(handleSuccess).withFailureHandler(handleError).showSheet(selectedHeader, accessToken);
+    console.log("show sheet working");
+}
+
+document.getElementById("setHeaderButton").addEventListener("click", callShowSheet);
+
+function showLoader() {
+    $("#loaderOverlay").css('visibility', 'visible'); // Show loader overlay
+}
+
+
+function performProcessing() {
+
+    document.getElementById("processingCompleteMessage").style.display = "block";
+
+    document.body.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // Dark semi-transparent background
+
+    window.scrollTo(0, 0);
+}
+
+
+$(document).ready(function() {
+    getHeaderValues();
+    showLoader();
+    if (accessToken) {
+        // refreshToken();
+        userDetailsId();
+        hideLoader();
+        console.log("working");
+    } else {
+        hideLoader();
+        $('#form-container').show(); // Show the form if accessToken is not available
+    }
+});
+
+// Function to handle successful API call
+function onSuccess(data) {
+    console.log('Success:', data);
+    hideLoader(); // Hide loader when successful
+    userDetailsId(); // Assuming userDetailsId is a function defined elsewhere
+}
+
+// Function to handle API call errors
+function onError(error) {
+    console.error('Error:', error);
+    hideLoader(); // Hide loader on error
+    $('#form-container').show(); // Show form container on error
+}
+
+// Function to make API request
+function fetchAPI(endpoint, method, options, onSuccess, onError, baseUrl) {
+    const refreshTokenValue = localStorage.getItem('refreshToken');
+    showLoader(); // Show loader before making the request
+    const url = `${baseUrl}192.168.68.159:5000`;
+
+    fetch(url, { method, ...options })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(onSuccess)
+        .catch(error => {
+            onError(error); // Call onError function in case of error
+        });
+}
+
+// GET request options
+const requestOptions = {
+    method: 'GET',
+    headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${refreshTokenValue}` // Assuming refreshToken is defined elsewhere
+    }
+};
+
+
+
+const input = document.querySelector("#phoneNumber");
+const iti = window.intlTelInput(input, {
+    separateDialCode: true,
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"
+});
+
+const button = $("#submitButton");
+const verifyButton = $("#verify");
+const verificationContainer = $("#verificationSection");
+const loaderOverlay = $('#loaderOverlay');
+
+$('#select-header').on('change', function() {
+    selectedHeader = $(this).val();
+});
+
+$("#submitButton").on('click', handleSubmit);
+$("#verify").on('click', handleVerification);
+
+// Event handler for Confirm button
+$('#Confirm').on('click', function() {
+    const usernameValue = $("#username").val();
+    const emailIdValue = $("#emailId").val();
+    const onbraderUrl = "https://api.surereach.io/api/v1/surereach/users/set-user-onboard";
+    const onbraderHeader = {
+        'accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+    };
+    const onboardedPayload = {
+        "email": emailIdValue,
+        "name": usernameValue
+    };
+    $.ajax({
+        type: "POST",
+        url: onbraderUrl,
+        headers: onbraderHeader,
+        data: JSON.stringify(onboardedPayload),
+        dataType: "json",
+        success: function(data) {
+            if (data.status_code === 200) {
+                handleSecondPage();
+                hideLoader();
+            } else {
+                hideLoader();
+                console.log("onboarded != true");
+                alert("Onboarded response is not successful");
+            }
+        },
+        error: function(xhr, status, error) {
+            if (xhr.status === 422 || xhr.status === 401) {
+                // handleSubmit();
+                hideLoader();
+            } else {
+                showErrorMessage('Error setting user onboard');
+            }
+        }
+    });
+});
+
+function showLoader() {
+    $("#loaderOverlay").css('visibility', 'visible');
+}
+
+function hideLoader() {
+    $("#loaderOverlay").css('visibility', 'hidden');
+}
+
+function handleSubmit() {
+    const phoneNumberValue = $("#phoneNumber").val();
+    const isValidPhoneNumber = iti.isValidNumber();
+    if (!isValidPhoneNumber) {
+        showErrorMessage("Please enter a valid phone number.");
+        return;
+    }
+
+    const sentotpurl = "https://api.surereach.io/api/v1/users/send-otp";
+    const selectedFlag = $(".iti__selected-dial-code").text().trim();
+    const countryCode = selectedFlag.replace('+', '');
+    const sendotppayload = `+${countryCode}${phoneNumberValue}`;
+    const fullphonenumber = { "user_mobile": sendotppayload };
+
+    showLoader();
+
+    fetch(sentotpurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(fullphonenumber)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error sending OTP');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.data && data.data.client_id) {
+                localStorage.setItem('client_id', data.data.client_id);
+                verificationContainer.css('display', 'block');
+            } else {
+                // If response status is not 200, hide the OTP container
+                verificationContainer.css('display', 'none');
+                throw new Error('Error sending OTP');
+            }
+        })
+        .catch(error => {
+            showErrorMessage(error.message);
+            // Hide the OTP container in case of error
+            verificationContainer.css('display', 'none');
+        })
+        .finally(() => {
+            hideLoader();
+        });
+}
+
+function handleVerification(verificationOtp) {
+    showLoader();
+    const clientID = localStorage.getItem('client_id');
+    const submitUrl = "https://api.surereach.io/api/v1/users/submit-extension-otp";
+    const submitPayload = {
+        "otp": verificationOtp,
+        "client_id": clientID
+    };
+
+    fetch(submitUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(submitPayload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Invalid OTP. Please try again.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            localStorage.removeItem('client_id');
+            const accessToken = data.data.access_token;
+            const tokenExpiry = data.data.token_expiry;
+            const refreshToken = data.data.refresh_token;
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken)
+            localStorage.setItem('tokenExpiry', tokenExpiry);
+
+            userDetailsId();
+        })
+        .catch(error => {
+            showErrorMessage(error.message);
+        })
+        .finally(() => {
+            hideLoader();
+        });
+}
+
+document.getElementById("verify").addEventListener("click", function() {
+    const verificationCode1 = document.getElementById("verificationCode1").value;
+    const verificationCode2 = document.getElementById("verificationCode2").value;
+    const verificationCode3 = document.getElementById("verificationCode3").value;
+    const verificationCode4 = document.getElementById("verificationCode4").value;
+    const verificationOtp = verificationCode1 + verificationCode2 + verificationCode3 + verificationCode4;
+
+    handleVerification(verificationOtp);
+});
+
+function userDetailsId() {
+    showLoader();
+    const accessToken = localStorage.getItem('accessToken');
+    const endpointURL = "https://api.surereach.io/api/v1/surereach/users/get-user-details";
+
+    const userDetailsHeader = {
+        'accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+    };
+
+    const options = {
+        method: 'GET',
+        headers: userDetailsHeader
+    };
+
+    fetch(endpointURL, options)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error getting user details');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.data.onboarded === true) {
+                hideLoader();
+                handleSecondPage();
+            } else {
+                // Display sign-in form
+                signInPage();
+            }
+        })
+        .catch(error => {
+            if (error.message === 'Error getting user details') {
+                refreshToken();
+                localStorage.removeItem('accessToken');
+            } else {
+                showErrorMessage('Error getting user details');
+            }
+        });
+}
+
+  </script>
+</body>
+
+</html>
